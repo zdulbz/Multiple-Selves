@@ -3,7 +3,7 @@ An exploration of modular vs. monolithic reinforcement learning in the context o
 
 An example environment:
 
-'''
+'
 env = World(n_actions = 4, 
             size = 10, 
             bounds = 3, 
@@ -19,4 +19,4 @@ env = World(n_actions = 4,
             ep_length = 50,
             resource_percentile = 90,
             reward_type = 'HRRL') # HRRL, sq_dev, lin_dev, well_being, min_sq
-'''
+'
