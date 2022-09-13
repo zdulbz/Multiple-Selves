@@ -1065,6 +1065,7 @@ class World():
         self.mod_reward_bias = mod_reward_bias
         self.clamp = 0
         self.squeeze_rewards = True
+        self.poisson_shuffle_mean = 0.02
 
         # self.action_space = spaces.Discrete(n_actions) # action space
         # self.observation_space = spaces.Box(low=-1, high=1, shape=(self.n_stats*self.view_size**2+self.n_stats,))
@@ -1095,7 +1096,7 @@ class World():
     ## Reset function
 
     def reset(self):
-        if not self.stationary: self.reset_grid()  # if changing world on every episode
+        # if not self.stationary: self.reset_grid()  # if changing world on every episode
         # self.make_stats()
         self.time_step = 0  # resets step timer
         self.dead = False
@@ -1107,6 +1108,12 @@ class World():
         self.view = self.grid[:, self.loc[0] - self.fov: self.loc[0] + self.fov + 1,
                     self.loc[1] - self.fov: self.loc[1] + self.fov + 1]  # gets initial agent view
         return self.get_state()
+
+    def poisson_shuffle(self):
+        for stat in range(self.n_stats):
+        if np.random.poisson(self.poisson_shuffle_mean) == 0: continue
+        self.grid[stat,:,:] = self.multiplier*get_n_patches(grid_size = self.size, bounds = self.bounds, modes = self.modes, var = self.variance) # makes gaussian patches
+        self.thresholds[stat] = np.percentile(self.grid[stat,:,:],self.resource_percentile)
 
     def reset_grid(self):
         self.thresholds = []
@@ -1194,6 +1201,9 @@ class World():
         if self.squeeze_rewards:
             reward = np.tanh(reward)
             module_rewards = np.tanh(module_rewards)
+
+        if not self.stationary: self.poisson_shuffle() # shuffles resource maps at poisson rate
+
 
         return self.get_state(), reward, self.done, module_rewards  # self.dead
 
@@ -1403,10 +1413,10 @@ if __name__ == "__main__":
     # variables
     learning_rates = [5e-3, 1e-3, 5e-4, 1e-4, 5e-5, 1e-5]
     set = int(np.floor(array_id/10))
-    label = '/nonstationary_blind_singleupdate'# f'/learning_rate_{learning_rates[set]}_'  # 'jumpstat' #grid,  'setpoint' bigreg
+    label = '/nonstationary_blind_singleupdate_poisson'# f'/learning_rate_{learning_rates[set]}_'  # 'jumpstat' #grid,  'setpoint' bigreg
     gamma = 0.5
     exp = [1/1, 1/1000, 1/5000, 1/10000]
-    nons = [5,6,7,8]
+    nons = [4,5,6,7,8]
     min_epsilon = 0.01
 
 # setpoints = [1,2,3,4,5,6,7,8,9]
