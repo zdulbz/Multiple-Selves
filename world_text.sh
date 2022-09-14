@@ -21,5 +21,6 @@ module load anaconda3
 conda activate polygon
 
 #python World_location.py $1
-python World.py $1
+#python World.py $1
+python World_testing.py $1
 #python World_stoptrain.py $1
