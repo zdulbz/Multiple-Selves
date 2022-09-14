@@ -1111,9 +1111,12 @@ class World():
 
     def poisson_shuffle(self):
         for stat in range(self.n_stats):
-        if np.random.poisson(self.poisson_shuffle_mean) == 0: continue
-        self.grid[stat,:,:] = self.multiplier*get_n_patches(grid_size = self.size, bounds = self.bounds, modes = self.modes, var = self.variance) # makes gaussian patches
-        self.thresholds[stat] = np.percentile(self.grid[stat,:,:],self.resource_percentile)
+            if np.random.poisson(self.poisson_shuffle_mean) == 0: continue
+            self.grid[stat,:,:] = self.multiplier*get_n_patches(grid_size = self.size, bounds = self.bounds, modes = self.modes, var = self.variance) # makes gaussian patches
+            self.thresholds[stat] = np.percentile(self.grid[stat,:,:],self.resource_percentile)
+
+        self.grid[:,[0,-1],:] = self.grid[:,:,[0,-1]] = self.border # make border
+
 
     def reset_grid(self):
         self.thresholds = []
