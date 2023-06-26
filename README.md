@@ -1,6 +1,8 @@
 # Multiple-Selves
 An exploration of modular vs. monolithic reinforcement learning in the context of competing drives
 
+World_testing.py contains a single file that runs experiments
+
 An example environment:
 
 ```python
